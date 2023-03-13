@@ -26,10 +26,12 @@ function App() {
   const [ isOpenPopupDelete, setIsOpenPopupDelete ] = React.useState(false);
 
   const [ selectedCard, setSelectedCard ] = React.useState(null);
-  
+
   const [ currentUser, setCurrentUser ] = React.useState({});
 
   const [ cards, setCards ] = useState([]);
+
+  const [ burgerClicked, setBurgerClicked ] = useState(false)
 
   const closeAllPopups = () => {
     setIsOpenPopupEdit(false);
@@ -116,7 +118,7 @@ function App() {
   return (
     <>
       <CurrentUserContext.Provider value={currentUser}>
-        <Header altText="Логотип Место" />
+        <Header altText="Логотип Место" burgerClicked={burgerClicked} handleBurgerClick={setBurgerClicked} />
 
         <Routes>
           <Route
