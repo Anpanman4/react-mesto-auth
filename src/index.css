@@ -6,6 +6,10 @@
 
 @import url(./blocks/header/header.css);
 @import url(./blocks/header/__logo/header__logo.css);
+@import url(./blocks/header/__container/header__container.css);
+@import url(./blocks/header/__container-mobile/header__container-mobile.css);
+@import url(./blocks/header/__exit/header__exit.css);
+@import url(./blocks/header/__mail/header__mail.css);
 @import url(./blocks/header/__burger/header__burger.css);
 @import url(./blocks/header/__close-button/header__close-button.css);
 
@@ -58,4 +62,5 @@
 @import url(./blocks/sign/__input/sign__input.css);
 @import url(./blocks/sign/__button/sign__button.css);
 @import url(./blocks/sign/__change/sign__change.css);
+@import url(./blocks/sign/__change-button/sign__change-button.css);
 
