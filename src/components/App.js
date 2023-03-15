@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Routes, Route} from 'react-router-dom';
+import {Routes, Route, useNavigate} from 'react-router-dom';
 
 import '../index.css'
 
@@ -16,8 +16,10 @@ import AddPlacePopup from "./AddPlacePopup.js";
 import InfoTooltip from "./InfoTooltip.js";
 
 import api from "../utils/api.js"
+import apiAuth from "../utils/apiAuth.js"
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js'
+import ProtectedRoute from "./ProtectedRoute.js"
 
 function App() {
   const [ isOpenPopupEdit, setIsOpenPopupEdit ] = React.useState(false);
@@ -27,11 +29,14 @@ function App() {
 
   const [ selectedCard, setSelectedCard ] = React.useState(null);
 
+  const [ isLoggedIn, setIsLoggedIn] = useState(false)
+  const [ userEmail, setUserEmail ] = React.useState("");
   const [ currentUser, setCurrentUser ] = React.useState({});
-
   const [ cards, setCards ] = useState([]);
 
   const [ burgerClicked, setBurgerClicked ] = useState(false)
+
+  const navigate = useNavigate();
 
   const closeAllPopups = () => {
     setIsOpenPopupEdit(false);
@@ -99,20 +104,54 @@ function App() {
     .catch((err) => console.log(err));
   }
 
+  const checkToken = () => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      apiAuth.getUserData(token)
+        .then((data) => {
+          setUserEmail(data.email)
+          setIsLoggedIn(true);
+          navigate("/");
+        })
+    }
+  }
+
+  // ф-и для авторизации и регистрации
+  const handleLogin = (body) => {
+    return apiAuth.login(body)
+    .then((data) => {
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        checkToken();
+      }
+    })
+  }
+
+  const handleRegister = (body) => {
+    return apiAuth.register(body)
+    .then(() => {
+      navigate("/sign-in")
+    })
+  }
+
   useEffect(() => {
+    // получаем данные пользователя
     api.getUserValues()
     .then((data) => {
       setCurrentUser(data);
     })
     .catch((err) => console.log(err))
-  }, [])
 
-  useEffect(() => {
+    // получаю карточки с сервера
     api.getInitialCards()
     .then((data) => {
       setCards(data)
     })
     .catch((err) => console.log(err))
+  }, [])
+
+  useEffect(() => {
+    checkToken();
   }, [])
 
   return (
@@ -124,7 +163,7 @@ function App() {
           <Route
             exact path='/'
             element={
-              <Main
+              <ProtectedRoute
                 cards={cards}
                 handleEditAvatarClick={setIsOpenPopupAvatar}
                 handleEditProfileClick={setIsOpenPopupEdit}
@@ -133,6 +172,8 @@ function App() {
                 onCardLike={onCardLike}
                 onCardDislike={onCardDislike}
                 handleCardDelete={deleteCard}
+                isLoggedIn={isLoggedIn}
+                component={Main}
               />
             }
           />
@@ -141,7 +182,7 @@ function App() {
             element={
               <main>
                 <Login
-
+                  handleLogin={handleLogin}
                 />
               </main>
             }
@@ -151,7 +192,7 @@ function App() {
             element={
               <main>
                 <Register
-  
+                  handleRegister={handleRegister}
                 />
               </main>
             }
