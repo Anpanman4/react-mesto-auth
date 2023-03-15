@@ -1,4 +1,4 @@
-.header__exit {
+.header__link {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
@@ -8,19 +8,19 @@
   margin: 6px 0 46px;
 }
 
-.header__exit:hover {
+.header__link:hover {
   opacity: .6;
   cursor: pointer;
 }
 
 @media screen and (max-width: 880px) {
-  .header__exit {
+  .header__link {
     margin-right: 30px;
   }
 }
 
 @media screen and (max-width: 500px) {
-  .header__exit {
+  .header__link {
     margin: 0;
   }
 }

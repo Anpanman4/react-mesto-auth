@@ -4,9 +4,7 @@ import logo from "../images/logo.svg"
 import burger from "../images/burger.svg"
 import close from "../images/Close-Icon.svg"
 
-function Header({altText, userEmail, burgerClicked, handleBurgerClick, children}) {
-  // const url = window.location.pathname;
-
+function Header({altText, burgerClicked, handleBurgerClick, children}) {
   return (
     <>
       {

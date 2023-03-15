@@ -26,13 +26,15 @@ function App() {
   const [ isOpenPopupAdd, setIsOpenPopupAdd ] = React.useState(false);
   const [ isOpenPopupAvatar, setIsOpenPopupAvatar ] = React.useState(false);
   const [ isOpenPopupDelete, setIsOpenPopupDelete ] = React.useState(false);
+  const [ isOpenPopupInfo, setIsOpenPopupInfo ] = React.useState(false);
 
+  const [ isSuccess, setIsSuccess ] = React.useState(true)
   const [ selectedCard, setSelectedCard ] = React.useState(null);
 
-  const [ isLoggedIn, setIsLoggedIn] = useState(false)
+  const [ isLoggedIn, setIsLoggedIn] = React.useState(false)
   const [ userEmail, setUserEmail ] = React.useState("");
   const [ currentUser, setCurrentUser ] = React.useState({});
-  const [ cards, setCards ] = useState([]);
+  const [ cards, setCards ] = React.useState([]);
 
   const [ burgerClicked, setBurgerClicked ] = useState(false)
 
@@ -43,6 +45,7 @@ function App() {
     setIsOpenPopupAdd(false);
     setIsOpenPopupAvatar(false);
     setIsOpenPopupDelete(false);
+    setIsOpenPopupInfo(false);
     setSelectedCard(null);
   }
 
@@ -122,15 +125,25 @@ function App() {
     .then((data) => {
       if (data.token) {
         localStorage.setItem("token", data.token);
-        checkToken();
+        setUserEmail(body.email);
+        setIsLoggedIn(true);
+        navigate("/");
       }
     })
+    .catch((err) => console.log(err))
   }
 
   const handleRegister = (body) => {
     return apiAuth.register(body)
     .then(() => {
-      navigate("/sign-in")
+      setIsSuccess(true);
+      setIsOpenPopupInfo(true);
+      navigate("/sign-in");
+    })
+    .catch((err) => {
+      setIsSuccess(false);
+      setIsOpenPopupInfo(true);
+      console.log(err);
     })
   }
 
@@ -140,20 +153,22 @@ function App() {
   }
 
   useEffect(() => {
-    // получаем данные пользователя
-    api.getUserValues()
-    .then((data) => {
-      setCurrentUser(data);
-    })
-    .catch((err) => console.log(err))
+    if (isLoggedIn) {
+      // получаем данные пользователя
+      api.getUserValues()
+      .then((data) => {
+        setCurrentUser(data);
+      })
+      .catch((err) => console.log(err))
 
-    // получаю карточки с сервера
-    api.getInitialCards()
-    .then((data) => {
-      setCards(data)
-    })
-    .catch((err) => console.log(err))
-  }, [])
+      // получаю карточки с сервера
+      api.getInitialCards()
+      .then((data) => {
+        setCards(data)
+      })
+      .catch((err) => console.log(err))
+    }
+  }, [isLoggedIn])
 
   useEffect(() => {
     checkToken();
@@ -169,7 +184,7 @@ function App() {
               <main>
                 <Header altText="Логотип Место" burgerClicked={burgerClicked} userEmail={userEmail} handleBurgerClick={setBurgerClicked}>
                   <p className="header__mail">{userEmail}</p>
-                  <p className="header__exit" onClick={logout}>Выйти</p>
+                  <p className="header__link" onClick={logout}>Выйти</p>
                 </Header>
                 <ProtectedRoute
                   cards={cards}
@@ -191,7 +206,7 @@ function App() {
             element={
               <main>
                 <Header altText="Логотип Место" burgerClicked={burgerClicked} userEmail={userEmail} handleBurgerClick={setBurgerClicked}>
-                  <p className="header__exit" onClick={() => navigate("/sign-up")}>Регистрация</p>
+                  <p className="header__link" onClick={() => navigate("/sign-up")}>Регистрация</p>
                 </Header>
                 <Login
                   handleLogin={handleLogin}
@@ -204,7 +219,7 @@ function App() {
             element={
               <main>
                 <Header altText="Логотип Место" burgerClicked={burgerClicked} userEmail={userEmail} handleBurgerClick={setBurgerClicked}>
-                  <p className="header__exit" onClick={() => navigate("/sign-in")}>Войти</p>
+                  <p className="header__link" onClick={() => navigate("/sign-in")}>Войти</p>
                 </Header>
                 <Register
                   handleRegister={handleRegister}
@@ -216,7 +231,7 @@ function App() {
 
         <Footer />
 
-        <InfoTooltip />
+        <InfoTooltip isOpened={isOpenPopupInfo} onClose={closeAllPopups} isSuccess={isSuccess} />
 
         <EditProfilePopup isOpen={isOpenPopupEdit} onClose={closeAllPopups} onUpdateUser={handleProfileSubmit} />
 
