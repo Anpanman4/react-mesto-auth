@@ -5,11 +5,11 @@
   font-size: 18px;
   line-height: 1.2;
   color: #FFFFFF;
-  margin: 6px 24px 0 0;
+  margin: 6px 24px 46px 0;
 }
 
 @media screen and (max-width: 500px) {
   .header__mail {
-    margin: 0;
+    margin: 0 0 18px;
   }
 }

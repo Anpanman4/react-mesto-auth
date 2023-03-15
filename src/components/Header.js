@@ -4,7 +4,7 @@ import logo from "../images/logo.svg"
 import burger from "../images/burger.svg"
 import close from "../images/Close-Icon.svg"
 
-function Header({altText, burgerClicked, handleBurgerClick}) {
+function Header({altText, userEmail, burgerClicked, handleBurgerClick, children}) {
   // const url = window.location.pathname;
 
   return (
@@ -12,15 +12,13 @@ function Header({altText, burgerClicked, handleBurgerClick}) {
       {
       burgerClicked &&
       <div className="header__container-mobile">
-        <p className="header__mail">Anpan@mail.ru</p>
-        <p className="header__exit">Выйти</p>
+        {children}
       </div>
       }
       <header className="header">
         <img src={logo} className="header__logo" alt={altText} />
         <div className="header__container">
-          <p className="header__mail">Anpan@mail.ru</p>
-          <p className="header__exit">Выйти</p>
+          {children}
         </div>
         {
           burgerClicked ?

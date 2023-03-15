@@ -109,7 +109,7 @@ function App() {
     if (token) {
       apiAuth.getUserData(token)
         .then((data) => {
-          setUserEmail(data.email)
+          setUserEmail(data.data.email)
           setIsLoggedIn(true);
           navigate("/");
         })
@@ -132,6 +132,11 @@ function App() {
     .then(() => {
       navigate("/sign-in")
     })
+  }
+
+  const logout = () => {
+    localStorage.clear();
+    navigate("/sign-in");
   }
 
   useEffect(() => {
@@ -157,30 +162,37 @@ function App() {
   return (
     <>
       <CurrentUserContext.Provider value={currentUser}>
-        <Header altText="Логотип Место" burgerClicked={burgerClicked} handleBurgerClick={setBurgerClicked} />
-
         <Routes>
           <Route
             exact path='/'
             element={
-              <ProtectedRoute
-                cards={cards}
-                handleEditAvatarClick={setIsOpenPopupAvatar}
-                handleEditProfileClick={setIsOpenPopupEdit}
-                handleAddPlaceClick={setIsOpenPopupAdd}
-                setSelectedCard={setSelectedCard}
-                onCardLike={onCardLike}
-                onCardDislike={onCardDislike}
-                handleCardDelete={deleteCard}
-                isLoggedIn={isLoggedIn}
-                component={Main}
-              />
+              <main>
+                <Header altText="Логотип Место" burgerClicked={burgerClicked} userEmail={userEmail} handleBurgerClick={setBurgerClicked}>
+                  <p className="header__mail">{userEmail}</p>
+                  <p className="header__exit" onClick={logout}>Выйти</p>
+                </Header>
+                <ProtectedRoute
+                  cards={cards}
+                  handleEditAvatarClick={setIsOpenPopupAvatar}
+                  handleEditProfileClick={setIsOpenPopupEdit}
+                  handleAddPlaceClick={setIsOpenPopupAdd}
+                  setSelectedCard={setSelectedCard}
+                  onCardLike={onCardLike}
+                  onCardDislike={onCardDislike}
+                  handleCardDelete={deleteCard}
+                  isLoggedIn={isLoggedIn}
+                  component={Main}
+                />
+              </main>
             }
           />
           <Route
             exact path='/sign-in'
             element={
               <main>
+                <Header altText="Логотип Место" burgerClicked={burgerClicked} userEmail={userEmail} handleBurgerClick={setBurgerClicked}>
+                  <p className="header__exit" onClick={() => navigate("/sign-up")}>Регистрация</p>
+                </Header>
                 <Login
                   handleLogin={handleLogin}
                 />
@@ -191,6 +203,9 @@ function App() {
             exact path='/sign-up'
             element={
               <main>
+                <Header altText="Логотип Место" burgerClicked={burgerClicked} userEmail={userEmail} handleBurgerClick={setBurgerClicked}>
+                  <p className="header__exit" onClick={() => navigate("/sign-in")}>Войти</p>
+                </Header>
                 <Register
                   handleRegister={handleRegister}
                 />
